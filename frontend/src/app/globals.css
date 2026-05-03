@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffafb;
+  --foreground: #333333;
+  --primary-pink: #ffd1dc;
+  --hot-pink: #ff69b4;
+  --shadow-pink: rgba(255, 105, 180, 0.15);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Global 3D Soft Effects (Neumorphism / Soft UI) */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Base Shadow utility classes to soft 3D */
+@layer utilities {
+  .shadow-sm {
+    box-shadow: 2px 2px 5px var(--shadow-pink), -2px -2px 5px #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  }
+  .shadow-md {
+    box-shadow: 4px 4px 10px var(--shadow-pink), -4px -4px 10px #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  }
+  .shadow-lg {
+    box-shadow: 6px 6px 15px var(--shadow-pink), -6px -6px 15px #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  }
+  
+  .btn-3d {
+    background: linear-gradient(145deg, #ffffff, #fff0f5);
+    box-shadow: 4px 4px 8px var(--shadow-pink), -4px -4px 8px #ffffff;
+    border-radius: 9999px;
+  }
+  
+  .btn-3d:active {
+    background: #fff5f8;
+    box-shadow: inset 4px 4px 8px var(--shadow-pink), inset -4px -4px 8px #ffffff;
+  }
+}
+
+input, select, textarea {
+  background: #fffafb !important;
+  border: 1px solid rgba(255, 105, 180, 0.2) !important;
+  box-shadow: inset 2px 2px 5px var(--shadow-pink), inset -2px -2px 5px #ffffff !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  box-shadow: inset 3px 3px 6px var(--shadow-pink), inset -3px -3px 6px #ffffff, 0 0 0 3px rgba(255, 105, 180, 0.2) !important;
+  border-color: var(--hot-pink) !important;
+  outline: none !important;
+}
+
+/* 3D effect on primary buttons */
+button[class*="bg-pink-600"], button[class*="bg-gradient-to-r"] {
+  background: linear-gradient(145deg, #ff71b8, #ff5eab) !important;
+  box-shadow: 4px 4px 10px var(--shadow-pink), -2px -2px 8px #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+button[class*="bg-pink-600"]:active, button[class*="bg-gradient-to-r"]:active {
+  transform: translateY(2px) !important;
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.4) !important;
+}
