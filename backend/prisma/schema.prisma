@@ -1,0 +1,584 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== UTILISATEURS ====================
+
+enum Role {
+  ADMIN
+  COIFFEUSE
+  CLIENTE
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  password           String
+  role               Role
+  actif              Boolean  @default(true)
+  passwordVersion    Int      @default(1)
+  mustChangePassword Boolean  @default(false)
+  isMfaEnabled        Boolean   @default(false)
+  mfaMethod           String?   // 'totp' | 'webauthn' | 'email'
+  encryptedTotpSecret String?
+  emailVerified       Boolean   @default(false)
+  emailVerifiedAt     DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  admin     Admin?
+  coiffeuse Coiffeuse?
+  cliente   Cliente?
+
+  webauthnCredentials WebauthnCredential[]
+  refreshTokens       RefreshToken[]
+  backupCodes         BackupCode[]
+  auditLogs           AuditLog[]
+  passwordResetTokens PasswordResetToken[]
+  pushTokens          PushToken[]
+  notificationLogs    NotificationLog[]
+
+  @@map("users")
+}
+
+model Admin {
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  nom       String
+  prenom    String
+  telephone String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+// ==================== COIFFEUSES ====================
+
+model Coiffeuse {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  nom         String
+  prenom      String
+  bio         String?
+  specialites String[]
+  photoUrl    String?
+  niveau      String   @default("CONFIRMEE")
+  actif       Boolean  @default(true)
+  salaire     Decimal? @db.Decimal(10, 2)
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  disponibilites  Disponibilite[]
+  rendezVous      RendezVous[]
+  portfolioPhotos PortfolioPhoto[]
+  avisRecus       Avis[]            @relation("AvisCoiffeuse")
+  mouvementsStock MouvementStock[]
+  depenses        Depense[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("coiffeuses")
+}
+
+model Disponibilite {
+  id          String @id @default(uuid())
+  coiffeuseId String
+  jourSemaine Int
+  heureDebut  String
+  heureFin    String
+
+  exceptions ExceptionDispo[]
+  coiffeuse  Coiffeuse @relation(fields: [coiffeuseId], references: [id], onDelete: Cascade)
+
+  @@unique([coiffeuseId, jourSemaine])
+  @@map("disponibilites")
+}
+
+model ExceptionDispo {
+  id                 String   @id @default(uuid())
+  disponibiliteId    String
+  dateException      DateTime @db.Date
+  heureDebutModifiee String?
+  heureFinModifiee   String?
+  raison             String?
+
+  disponibilite Disponibilite @relation(fields: [disponibiliteId], references: [id], onDelete: Cascade)
+
+  @@map("exception_dispos")
+}
+
+// ==================== CLIENTES ====================
+
+model Cliente {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  nom           String
+  prenom        String
+  telephone     String
+  dateNaissance DateTime?
+
+  typeCheveux           String?
+  textureCheveux        String?
+  historiqueColorations String[]
+  allergies             String?
+  preferences           String?
+
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rendezVous RendezVous[]
+  photos     PhotoCliente[]
+  avisDonnes Avis[]       @relation("AvisCliente")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("clientes")
+}
+
+// ==================== SERVICES & TARIFS ====================
+
+enum CategorieService {
+  COUPE
+  COLORATION
+  SOIN
+  COIFFAGE_EVENEMENT
+  EXTENSION
+  FORFAIT
+}
+
+model Service {
+  id                  String           @id @default(uuid())
+  nom                 String
+  categorie           CategorieService
+  description         String?
+  prixBase            Decimal          @db.Decimal(10, 2)
+  dureeMinutes        Int
+  specialitesRequises String[]
+  actif               Boolean          @default(true)
+
+  options       ServiceOption[]
+  consommations ConsommationProduit[]
+  rendezVous    RendezVousService[]
+
+  createdAt DateTime @default(now())
+
+  @@map("services")
+}
+
+model ServiceOption {
+  id                     String  @id @default(uuid())
+  serviceId              String
+  nom                    String
+  prixSupplement         Decimal @db.Decimal(10, 2)
+  dureeSupplementMinutes Int     @default(0)
+
+  service    Service             @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  rendezVous RendezVousService[]
+
+  @@map("service_options")
+}
+
+// ==================== RENDEZ-VOUS ====================
+
+enum StatutRDV {
+  EN_ATTENTE
+  CONFIRME
+  EN_COURS
+  TERMINE
+  ANNULE_CLIENT
+  ANNULE_SALON
+  NO_SHOW
+}
+
+model RendezVous {
+  id              String    @id @default(uuid())
+  clienteId       String?   // null for walk-in (présentiel)
+  coiffeuseId     String
+  dateHeure       DateTime
+  dureeEstimee    Int
+  dateHeureFin    DateTime
+  statut          StatutRDV @default(CONFIRME)
+  prixTotal       Decimal   @db.Decimal(10, 2)
+  modePaiement    String    @default("ESPECE")
+  paiementRecu    Boolean   @default(false)
+  codeValidation  String    @unique @default(uuid())
+  note            String?
+  typeRdv         String    @default("ONLINE")  // ONLINE | PRESENTIEL
+  walkInNom       String?   // nom du client présentiel
+  walkInTelephone String?   // téléphone optionnel
+
+  cliente   Cliente?  @relation(fields: [clienteId], references: [id])
+  coiffeuse Coiffeuse @relation(fields: [coiffeuseId], references: [id])
+  services  RendezVousService[]
+  avis      Avis?
+  mouvementsStock MouvementStock[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([coiffeuseId, dateHeure])
+  @@index([clienteId, dateHeure])
+  @@map("rendez_vous")
+}
+
+// ==================== PARAMÈTRES SALON ====================
+
+model SalonParametres {
+  id               String   @id @default(cuid())
+  nomSalon         String   @default("Salon de Coiffure")
+  slogan           String?
+  adresse          String?
+  ville            String?
+  telephone        String?
+  emailContact     String?
+  description      String?
+  googleMapsUrl    String?
+  horaireOuverture Json?    // { "1": { debut: "09:00", fin: "19:00" }, ... }
+  dureeSlotMin     Int      @default(30)
+  avanceMaxJours   Int      @default(60)
+  delaiAnnulationH Int      @default(24)
+  updatedAt        DateTime @updatedAt
+
+  @@map("salon_parametres")
+}
+
+model RendezVousService {
+  id           String  @id @default(uuid())
+  rendezVousId String
+  serviceId    String
+  optionId     String?
+  prixApplique Decimal @db.Decimal(10, 2)
+  dureeMinutes Int
+
+  rendezVous RendezVous     @relation(fields: [rendezVousId], references: [id], onDelete: Cascade)
+  service    Service        @relation(fields: [serviceId], references: [id])
+  option     ServiceOption? @relation(fields: [optionId], references: [id])
+
+  @@map("rendez_vous_services")
+}
+
+// ==================== AVIS & PHOTOS ====================
+
+model Avis {
+  id               String   @id @default(uuid())
+  rendezVousId     String   @unique
+  clienteId        String
+  coiffeuseId      String
+  note             Int
+  commentaire      String?
+  photosAvant      String[]
+  photosApres      String[]
+  moderationStatut String   @default("EN_ATTENTE")
+
+  rendezVous RendezVous @relation(fields: [rendezVousId], references: [id])
+  cliente    Cliente    @relation("AvisCliente", fields: [clienteId], references: [id])
+  coiffeuse  Coiffeuse  @relation("AvisCoiffeuse", fields: [coiffeuseId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([coiffeuseId, createdAt])
+  @@index([clienteId])
+  @@index([moderationStatut, coiffeuseId])
+  @@map("avis")
+}
+
+model PortfolioPhoto {
+  id              String    @id @default(uuid())
+  coiffeuseId     String
+  url             String
+  description     String?
+  categorie       String
+  dateRealisation DateTime?
+
+  coiffeuse Coiffeuse @relation(fields: [coiffeuseId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_photos")
+}
+
+model PhotoCliente {
+  id          String   @id @default(uuid())
+  clienteId   String
+  url         String
+  description String?
+  datePhoto   DateTime @default(now())
+
+  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@map("photos_clientes")
+}
+
+// ==================== UNITÉS DE MESURE ====================
+
+model Unite {
+  id    String @id @default(uuid())
+  nom   String @unique
+  abrev String
+
+  @@map("unites")
+}
+
+// ==================== STOCK PRODUITS ====================
+
+model Produit {
+  id             String   @id @default(uuid())
+  nom            String
+  marque         String?
+  reference      String?  @unique
+  categorie      String
+  description    String?
+  fournisseur    String?
+  quantiteStock  Decimal  @default(0) @db.Decimal(10, 3)
+  quantiteAlerte Int      @default(5)
+  unite          String
+  prixAchatUnite Decimal? @db.Decimal(10, 2)
+  actif          Boolean  @default(true)
+
+  consommations  ConsommationProduit[]
+  mouvements     MouvementStock[]
+
+  @@map("produits")
+}
+
+model ConsommationProduit {
+  id        String  @id @default(uuid())
+  serviceId String
+  produitId String
+  quantite  Decimal @db.Decimal(10, 3)
+
+  service Service @relation(fields: [serviceId], references: [id])
+  produit Produit @relation(fields: [produitId], references: [id])
+
+  @@unique([serviceId, produitId])
+  @@map("consommations_produits")
+}
+
+// ==================== TRAÇABILITÉ STOCK ====================
+
+// ==================== DÉPENSES ====================
+
+enum TypeDepense {
+  SALAIRE
+  AVANCE
+  CHARGE
+  AUTRE
+}
+
+model Depense {
+  id           String      @id @default(uuid())
+  label        String
+  montant      Decimal     @db.Decimal(10, 2)
+  type         TypeDepense @default(AUTRE)
+  coiffeuseId  String?
+  mois         Int         // 1–12
+  annee        Int
+  dateDepense  DateTime    @default(now())
+  payee        Boolean     @default(false)
+  notes        String?
+  createdAt    DateTime    @default(now())
+
+  coiffeuse Coiffeuse? @relation(fields: [coiffeuseId], references: [id], onDelete: SetNull)
+
+  @@index([annee, mois])
+  @@index([coiffeuseId, annee, mois])
+  @@index([dateDepense])
+  @@map("depenses")
+}
+
+model MouvementStock {
+  id            String   @id @default(uuid())
+  produitId     String
+  rendezVousId  String?
+  coiffeuseId   String?
+  type          String   // CONSOMMATION | AJOUT | CORRECTION
+  quantite      Decimal  @db.Decimal(10, 3)
+  quantiteAvant Decimal  @db.Decimal(10, 3)
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  produit    Produit     @relation(fields: [produitId], references: [id])
+  rendezVous RendezVous? @relation(fields: [rendezVousId], references: [id])
+  coiffeuse  Coiffeuse?  @relation(fields: [coiffeuseId], references: [id])
+
+  @@index([produitId, createdAt])
+  @@index([rendezVousId])
+  @@map("mouvements_stock")
+}
+
+// ==================== SÉCURITÉ - WEBAUTHN ====================
+
+model WebauthnCredential {
+  id           String   @id @default(uuid())
+  userId       String
+  credentialId String   @unique
+  publicKey    Bytes
+  counter      BigInt   @default(0)
+  deviceType   String?
+  transports   String[]
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("webauthn_credentials")
+}
+
+// ==================== SÉCURITÉ - REFRESH TOKENS ====================
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  deviceInfo Json?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ==================== SÉCURITÉ - BACKUP CODES ====================
+
+model BackupCode {
+  id        String    @id @default(uuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("backup_codes")
+}
+
+// ==================== SÉCURITÉ - AUDIT LOG ====================
+
+enum AuditAction {
+  LOGIN_SUCCESS
+  LOGIN_FAIL
+  MFA_SETUP
+  MFA_VERIFY_SUCCESS
+  MFA_VERIFY_FAIL
+  PASSWORD_CHANGE
+  PASSWORD_RESET_REQUEST
+  PASSWORD_RESET_SUCCESS
+  DATA_ACCESS
+  ADMIN_ACTION
+  ACCOUNT_LOCKED
+  TOKEN_REFRESH
+  LOGOUT
+  OTP_REQUEST
+  OTP_VERIFY_SUCCESS
+  OTP_VERIFY_FAIL
+  REGISTER_SUCCESS
+  ACCOUNT_DELETED
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String?
+  action    AuditAction
+  resource  String?
+  ipAddress String?
+  userAgent String?
+  success   Boolean     @default(true)
+  metadata  Json?
+  createdAt DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+// ==================== SÉCURITÉ - PASSWORD RESET ====================
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// ==================== EMAIL LOGS ====================
+
+model EmailLog {
+  id           String    @id @default(uuid())
+  traceId      String    @default(uuid())
+  recipient    String
+  subject      String
+  templateName String
+  status       String    @default("sent")  // sent|delivered|bounced|failed|dev_skipped
+  providerId   String?
+  errorMessage String?
+  metadata     Json?
+  sentAt       DateTime  @default(now())
+  deliveredAt  DateTime?
+  bouncedAt    DateTime?
+
+  @@index([recipient])
+  @@index([traceId])
+  @@index([status])
+  @@index([sentAt])
+  @@map("email_logs")
+}
+
+// ==================== PUSH NOTIFICATIONS ====================
+
+model PushToken {
+  id         String   @id @default(uuid())
+  userId     String
+  token      String
+  platform   String   // 'web'|'android'|'ios'|'desktop'
+  isActive   Boolean  @default(true)
+  deviceInfo Json?
+  lastUsedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationLogs NotificationLog[]
+
+  @@unique([userId, token])
+  @@index([userId])
+  @@index([platform])
+  @@map("push_tokens")
+}
+
+model NotificationLog {
+  id           String    @id @default(uuid())
+  userId       String?
+  eventType    String
+  title        String
+  body         String
+  platform     String
+  tokenId      String?
+  status       String    // sent|delivered|failed|skipped
+  fcmMessageId String?
+  errorCode    String?
+  sentAt       DateTime  @default(now())
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  token PushToken? @relation(fields: [tokenId], references: [id])
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([sentAt])
+  @@map("notification_logs")
+}

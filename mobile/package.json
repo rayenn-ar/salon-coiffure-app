@@ -1,0 +1,26 @@
+{
+  "name": "@salon/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application mobile iOS/Android — Salon de Coiffure",
+  "scripts": {
+    "sync:ios": "npx cap sync ios",
+    "sync:android": "npx cap sync android",
+    "open:ios": "npx cap open ios",
+    "open:android": "npx cap open android",
+    "build": "npm run build --prefix ../frontend && npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/haptics": "^6.0.2",
+    "@capacitor/keyboard": "^6.0.2",
+    "@capacitor/push-notifications": "^6.0.2",
+    "@capacitor/local-notifications": "^6.1.1",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}

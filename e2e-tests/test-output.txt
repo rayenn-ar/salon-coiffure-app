@@ -1,0 +1,6 @@
+﻿
+Running 77 tests using 1 worker
+
+[1A[2K[1/77] [chromium] › tests\01-public.spec.ts:9:7 › Public pages › Home page loads with hero text
+[1A[2K[2/77] [chromium] › tests\01-public.spec.ts:16:7 › Public pages › Home page – Réserver maintenant link goes to /reservation
+[1A[2K[3/77] [chromium] › tests\01-public.spec.ts:22:7 › Public pages › Services page loads list of services

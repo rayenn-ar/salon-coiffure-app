@@ -1,0 +1,128 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║                    🎨 SALON DE COIFFURE                                  ║
+║                                                                           ║
+║                  ✅ PRÊT À ÊTRE LANCÉ                                    ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+🚀 POUR DÉMARRER L'APPLICATION:
+═══════════════════════════════════════════════════════════════════════════
+
+   ▶️ DOUBLE-CLIQUEZ SUR: DEMARRER.bat
+
+   Cela va:
+   • Vérifier que Docker est installé
+   • Lancer PostgreSQL en Docker
+   • Installer les dépendances npm
+   • Configurer la base de données
+   • Lancer le Backend (port 3001)
+   • Lancer le Frontend (port 3000)
+   • Ouvrir automatiquement le navigateur
+
+
+📱 UNE FOIS LANCÉ:
+═══════════════════════════════════════════════════════════════════════════
+
+   Vous verrez:
+
+   1. Une fenêtre noire "🔌 BACKEND API - Port 3001"
+      ↳ Exécute le serveur Express
+      ↳ Messages: "🚀 API Salon de Coiffure démarrée sur http://localhost:3001"
+
+   2. Une deuxième fenêtre noire "🌐 FRONTEND WEB - Port 3000"
+      ↳ Exécute le serveur Next.js
+      ↳ Messages: "> ready started server on 0.0.0.0:3000"
+
+   3. Votre navigateur s'ouvrira automatiquement à:
+      ↳ http://localhost:3000
+
+
+✅ VÉRIFICATIONS - Si tout fonctionne:
+═══════════════════════════════════════════════════════════════════════════
+
+   Testez les URLs dans votre navigateur:
+   
+   ✓ http://localhost:3000       → Page d'accueil (Frontend)
+   ✓ http://localhost:3001       → Page d'accueil (Backend)
+   ✓ http://localhost:3001/health → {"status":"OK",...}
+
+
+⏹️ POUR ARRÊTER L'APPLICATION:
+═══════════════════════════════════════════════════════════════════════════
+
+   Méthode 1: Fermer les terminaux
+   • Cliquez sur le X de chaque fenêtre noire
+
+   Méthode 2: Ctrl+C
+   • Pressez Ctrl+C dans chaque fenêtre noire
+
+   Méthode 3: Docker
+   • Exécutez: docker-compose down
+
+
+💾 BASE DE DONNÉES - Informations:
+═══════════════════════════════════════════════════════════════════════════
+
+   PostgreSQL 16 s'exécute dans Docker:
+
+   • Host:     localhost
+   • Port:     5434
+   • User:     postgres
+   • Password: postgres
+   • Database: salon_db
+
+   Pour voir les données graphiquement (une fois le backend lancé):
+   • Allez dans le dossier backend
+   • Tapez: npm run db:studio
+   • Ouvrira une interface web pour gérer la BD
+
+
+❓ SI VOUS AVEZ DES PROBLÈMES:
+═══════════════════════════════════════════════════════════════════════════
+
+   ❌ "Docker not found"
+   → Installez Docker Desktop: https://www.docker.com/products/docker-desktop
+   → Redémarrez DEMARRER.bat après installation
+
+   ❌ "Port already in use"
+   → Un service antérieur n'est pas arrêté
+   → Exécutez: docker-compose down
+   → Réessayez DEMARRER.bat
+
+   ❌ "Cannot connect to database"
+   → Vérifiez que Docker est lancé
+   → Exécutez: docker ps (doit montrer salon-postgres)
+   → Consultez: docker logs salon-postgres
+
+   ❌ "npm: command not found"
+   → Node.js n'est pas installé
+   → Installez Node.js 18+: https://nodejs.org
+   → Redémarrez votre ordinateur après installation
+
+
+📚 FICHIERS D'AIDE:
+═══════════════════════════════════════════════════════════════════════════
+
+   Consultez ces fichiers pour plus d'informations:
+
+   • README.md              → Guide complet d'utilisation
+   • STARTUP_GUIDE.md       → Instructions détaillées étape par étape
+   • COMMANDES_RAPIDES.ps1  → Commandes PowerShell pratiques
+   • 🚀_LIRE_MOI.txt        → Ce fichier
+
+
+🎯 RÉSUMÉ RAPIDE:
+═══════════════════════════════════════════════════════════════════════════
+
+   1. Assurez-vous que Docker est lancé
+   2. Double-cliquez sur DEMARRER.bat
+   3. Attendez que les terminaux s'ouvrent
+   4. Votre navigateur ouvrira http://localhost:3000
+   5. Utilisez l'application!
+
+
+═══════════════════════════════════════════════════════════════════════════
+              ⭐ PRÊT? DOUBLE-CLIQUEZ SUR DEMARRER.bat ⭐
+═══════════════════════════════════════════════════════════════════════════

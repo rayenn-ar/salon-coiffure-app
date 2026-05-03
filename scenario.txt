@@ -1,0 +1,360 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║        SCÉNARIOS D'UTILISATION — SALON DE COIFFURE APP             ║
+║        Tous les parcours utilisateur possibles                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════
+ A. VISITEUR NON CONNECTÉ (PUBLIC)
+═══════════════════════════════════════════════════════════════════════
+
+SC-A01 : Découvrir le salon
+  → Arriver sur la page d'accueil
+  → Voir le hero, les statistiques, les services présentés, le CTA
+  → Naviguer vers /services, /coiffeuses via les liens
+
+SC-A02 : Consulter le catalogue de services
+  → Aller sur /services
+  → Voir tous les services groupés par catégorie (COUPE, COLORATION, SOIN, etc.)
+  → Voir prix, durée, description de chaque service
+  → Cliquer "Réserver" → redirigé vers /connexion (non authentifié)
+
+SC-A03 : Voir les coiffeuses
+  → Aller sur /coiffeuses
+  → Voir les profils : nom, spécialités, niveau, bio, note moyenne
+  → Cliquer "Réserver avec Fatima" → redirigé vers /reservation?coiffeuse=ID
+
+SC-A04 : S'inscrire comme cliente
+  → Aller sur /inscription
+  → Remplir : nom, prénom, email, téléphone, mot de passe, confirmation
+  → Soumettre → création de compte → auto-login → redirect /mon-espace
+
+SC-A05 : Se connecter (cliente)
+  → Aller sur /connexion
+  → Saisir email + mot de passe
+  → Succès → redirect /mon-espace
+
+SC-A06 : Se connecter (admin)
+  → Aller sur /connexion
+  → Saisir admin@salon-beaute.fr / admin12345
+  → Succès → redirect /admin
+
+SC-A07 : Se connecter (coiffeuse)
+  → Aller sur /connexion
+  → Saisir fatima@salon-beaute.fr / coiffeuse123
+  → Succès → redirect /espace-pro
+
+SC-A08 : Tentative de connexion échouée
+  → Saisir email/mot de passe incorrect
+  → Voir message d'erreur "Email ou mot de passe incorrect"
+  → Rester sur la page /connexion
+
+SC-A09 : Naviguer via la Navbar
+  → Voir les liens : Services, Nos Coiffeuses, Réserver
+  → Non connecté : boutons "Connexion" et "S'inscrire"
+  → Cliquer chaque lien et vérifier la navigation
+
+SC-A10 : Voir le Footer
+  → Scroller en bas de chaque page
+  → Voir horaires, contact, liens de navigation
+
+
+═══════════════════════════════════════════════════════════════════════
+ B. CLIENTE CONNECTÉE
+═══════════════════════════════════════════════════════════════════════
+
+SC-B01 : Parcours complet de réservation
+  → Se connecter comme cliente
+  → Aller sur /reservation
+  → Étape 1 : sélectionner un ou plusieurs services (ex: Coupe + Brushing)
+  → Étape 2 : choisir une coiffeuse
+  → Étape 3 : choisir une date (parmi les 14 prochains jours)
+  → Voir les créneaux disponibles
+  → Choisir un créneau horaire
+  → Ajouter une note (optionnel)
+  → Étape 4 : confirmation → voir récapitulatif (services, coiffeuse, date, prix total, durée)
+  → Valider → redirect /mon-espace?success=reservation
+
+SC-B02 : Consulter mes rendez-vous
+  → Aller sur /mon-espace (onglet "Mes rendez-vous")
+  → Voir section "Prochains rendez-vous" (EN_ATTENTE, CONFIRME)
+  → Voir section "Historique" (TERMINE, ANNULE)
+  → Chaque carte : date, heure, coiffeuse, services, prix, statut
+
+SC-B03 : Annuler un rendez-vous
+  → Aller sur /mon-espace
+  → Trouver un RDV en attente ou confirmé
+  → Cliquer "Annuler"
+  → Confirmer l'annulation
+  → Statut passe à ANNULE_CLIENT
+
+SC-B04 : Gérer mon profil capillaire
+  → Aller sur /mon-espace (onglet "Profil capillaire")
+  → Remplir : type de cheveux, texture, allergies, préférences
+  → Sauvegarder → message de succès
+
+SC-B05 : Laisser un avis après un RDV
+  → Avoir un RDV au statut TERMINE
+  → Aller sur /mon-espace
+  → Cliquer "Laisser un avis"
+  → Donner une note (1-5)
+  → Soumettre
+
+SC-B06 : Modifier mes paramètres
+  → Aller sur /parametres
+  → Modifier nom, prénom, téléphone, email
+  → Sauvegarder
+
+SC-B07 : Changer mon mot de passe
+  → Aller sur /parametres
+  → Section "Changement de mot de passe"
+  → Saisir ancien mot de passe + nouveau + confirmation
+  → Sauvegarder → token invalidé → nouveau token
+
+SC-B08 : Réservation multi-services
+  → Sélectionner 3 services (ex: Coupe + Coloration + Soin)
+  → Vérifier que le prix total et la durée sont cumulés
+  → Compléter la réservation
+
+SC-B09 : Réservation avec coiffeuse pré-sélectionnée
+  → Depuis /coiffeuses, cliquer "Réserver avec Sarah"
+  → Arriver sur /reservation avec coiffeuse pré-remplie
+  → L'étape 2 doit être pré-sélectionnée
+
+SC-B10 : Tentative de réservation sur créneau indisponible
+  → Choisir un dimanche → aucun créneau disponible
+  → Choisir un créneau déjà pris → message d'erreur
+
+SC-B11 : Déconnexion
+  → Cliquer "Déconnexion" dans la Navbar
+  → Token supprimé → redirect /connexion
+  → Tenter d'accéder à /mon-espace → redirect /connexion
+
+
+═══════════════════════════════════════════════════════════════════════
+ C. COIFFEUSE CONNECTÉE
+═══════════════════════════════════════════════════════════════════════
+
+SC-C01 : Voir mon agenda
+  → Se connecter comme coiffeuse
+  → Aller sur /espace-pro (onglet "Mon agenda")
+  → Voir les RDV de la semaine dans un calendrier
+  → Aujourd'hui mis en évidence
+  → Naviguer semaine précédente/suivante
+
+SC-C02 : Confirmer un rendez-vous
+  → Voir un RDV EN_ATTENTE
+  → Cliquer "Confirmer" 
+  → Statut passe à CONFIRME
+
+SC-C03 : Refuser un rendez-vous
+  → Voir un RDV EN_ATTENTE
+  → Cliquer "Refuser"
+  → Statut passe à ANNULE_SALON
+
+SC-C04 : Démarrer une prestation
+  → Voir un RDV CONFIRME
+  → Cliquer "Démarrer"
+  → Statut passe à EN_COURS
+
+SC-C05 : Terminer une prestation
+  → Voir un RDV EN_COURS
+  → Cliquer "Terminer"
+  → Statut passe à TERMINE
+  → Stock automatiquement déduit selon les ingrédients des services
+
+SC-C06 : Marquer un no-show
+  → Voir un RDV CONFIRME dont l'heure est passée
+  → Cliquer "No show"
+  → Statut passe à NO_SHOW
+
+SC-C07 : Créer un RDV présentiel (walk-in)
+  → Onglet "Client présentiel"
+  → Saisir nom du client, téléphone (optionnel)
+  → Choisir date et heure
+  → Sélectionner des services
+  → Valider → RDV créé en PRESENTIEL
+
+SC-C08 : Logger les matières utilisées
+  → Sélectionner un RDV TERMINE
+  → Ajouter des lignes de matière (produit + quantité)
+  → Sauvegarder → stock déduit + mouvement créé
+
+SC-C09 : Modifier mes disponibilités
+  → Aller sur /parametres
+  → Section "Disponibilités"
+  → Modifier horaires par jour de la semaine
+  → Activer/désactiver des jours
+  → Sauvegarder
+
+SC-C10 : Modifier mon profil
+  → /parametres → modifier bio, spécialités
+  → Sauvegarder
+
+SC-C11 : Accès interdit aux pages admin
+  → Tenter d'accéder à /admin
+  → Doit être redirigé (role !== ADMIN)
+
+
+═══════════════════════════════════════════════════════════════════════
+ D. ADMINISTRATEUR
+═══════════════════════════════════════════════════════════════════════
+
+SC-D01 : Tableau de bord
+  → Se connecter comme admin
+  → Aller sur /admin (onglet "Tableau de bord")
+  → Voir les KPIs : RDV aujourd'hui, semaine, en attente
+  → Voir CA du jour, du mois
+  → Voir alertes stock, total clientes, total coiffeuses
+  → Voir graphiques (RDV par jour, CA par mois, RDV par statut)
+
+SC-D02 : Gérer les rendez-vous
+  → Onglet "Rendez-vous"
+  → Filtrer par statut (EN_ATTENTE, CONFIRME, etc.)
+  → Filtrer par date
+  → Changer le statut d'un RDV
+
+SC-D03 : Créer un service
+  → Onglet "Services"
+  → Cliquer "Nouveau service"
+  → Remplir : nom, catégorie, prix, durée, description
+  → Valider → service ajouté à la liste
+
+SC-D04 : Modifier un service
+  → Cliquer "Modifier" sur un service existant
+  → Changer le prix, la durée, etc.
+  → Sauvegarder
+
+SC-D05 : Désactiver un service
+  → Cliquer "Supprimer" sur un service
+  → Le service passe en actif=false (soft delete)
+
+SC-D06 : Ajouter une coiffeuse
+  → Onglet "Coiffeuses"
+  → Cliquer "Ajouter"
+  → Remplir : nom, prénom, email, mot de passe, spécialités, niveau
+  → Valider → compte USER + COIFFEUSE créé
+
+SC-D07 : Activer/Désactiver une coiffeuse
+  → Cliquer le toggle actif/inactif
+  → Le statut change
+
+SC-D08 : Supprimer une coiffeuse
+  → Cliquer "Supprimer"
+  → Confirmer → soft delete (user.actif = false)
+
+SC-D09 : Gérer le stock
+  → Onglet "Stock"
+  → Voir les produits avec quantités et alertes
+  → Ajouter un nouveau produit
+  → Modifier un produit (nom, marque, seuil d'alerte)
+  → Mettre à jour le stock (ajouter ou corriger)
+  → Voir les produits en alerte (stock < seuil)
+
+SC-D10 : Gérer les ingrédients d'un service
+  → Dans l'onglet "Services" ou "Stock"
+  → Associer des produits à un service (ingrédients)
+  → Définir la quantité consommée par prestation
+
+SC-D11 : Voir les clientes
+  → Onglet "Clientes"
+  → Voir la liste : nom, téléphone, email, type cheveux, nb RDV
+
+SC-D12 : Paramètres du salon
+  → Onglet "Paramètres" ou /parametres
+  → Modifier : nom du salon, adresse, slogan, téléphone, email
+  → Modifier les horaires d'ouverture par jour
+  → Modifier : durée slot, avance max, délai d'annulation
+
+SC-D13 : Statistiques coiffeuses
+  → Voir le classement : nb RDV, CA généré, note moyenne par coiffeuse
+  → Graphiques de l'activité
+
+SC-D14 : Voir les mouvements de stock
+  → Historique des consommations, ajouts, corrections
+  → Filtrer par produit ou coiffeuse
+
+
+═══════════════════════════════════════════════════════════════════════
+ E. SCÉNARIOS EDGE CASES & ERREURS
+═══════════════════════════════════════════════════════════════════════
+
+SC-E01 : Inscription avec email déjà utilisé
+  → Remplir le formulaire avec admin@salon-beaute.fr
+  → Message "Impossible de créer ce compte" (sans révéler l'existence)
+
+SC-E02 : Mot de passe trop court à l'inscription
+  → Saisir un mot de passe < 8 caractères
+  → Erreur de validation côté frontend et/ou backend
+
+SC-E03 : Champs obligatoires manquants
+  → Soumettre des formulaires avec champs vide
+  → Vérifier que les validations empêchent la soumission
+
+SC-E04 : Token expiré ou invalide
+  → Patienter jusqu'à expiration du JWT
+  → Toute requête API → 401 → redirect /connexion
+
+SC-E05 : Accès non autorisé par rôle
+  → Cliente tente d'accéder à /admin → redirect
+  → Coiffeuse tente d'accéder à /admin → redirect
+  → Cliente tente POST /admin/coiffeuses → 403
+
+SC-E06 : Double réservation même créneau
+  → Deux clientes réservent le même créneau simultanément
+  → La 2ème doit recevoir une erreur (isolation Serializable)
+
+SC-E07 : Réservation date passée
+  → Tenter de réserver hier → doit être bloqué
+
+SC-E08 : Annulation hors délai
+  → Tenter d'annuler un RDV dans les 24h avant
+  → Vérifier le respect du delaiAnnulationH
+
+SC-E09 : Rate limiting
+  → 10+ tentatives de login rapides → bloqué 15min (prod)
+  → En dev → skip pour localhost
+
+SC-E10 : Injection SQL / XSS
+  → Tenter des entrées malicieuses dans les formulaires
+  → Doit être neutralisé par Prisma (parameterized queries)
+  → Helmet + CSP headers en prod
+
+SC-E11 : Changement de mot de passe → invalidation de session
+  → Changer le mot de passe → passwordVersion incrémenté
+  → Ancien token doit être rejeté (vérification pv dans auth middleware)
+
+SC-E12 : Utilisateur désactivé
+  → Admin désactive un user (actif=false)
+  → User tente de se connecter → refusé
+  → Si déjà connecté, prochaine requête API → 401
+
+SC-E13 : Stock négatif impossible
+  → Tenter de consommer plus de stock que disponible
+  → Vérifier le comportement (erreur ou stock à 0)
+
+SC-E14 : Service désactivé invisible pour booking
+  → Admin désactive un service
+  → Le service ne doit plus apparaître dans /reservation
+
+
+═══════════════════════════════════════════════════════════════════════
+ F. SCÉNARIOS MOBILE / UX
+═══════════════════════════════════════════════════════════════════════
+
+SC-F01 : Navigation mobile
+  → Voir le hamburger menu sur petit écran
+  → Ouvrir/fermer le menu
+  → Naviguer entre les pages
+
+SC-F02 : Formulaires sur mobile
+  → Tester les formulaires d'inscription, connexion, réservation
+  → Vérifier la taille des champs et boutons
+  → Vérifier le scrolling dans le wizard de réservation
+
+SC-F03 : Responsive des tableaux admin
+  → Vérifier que les tableaux du dashboard admin scrollent horizontalement
+
+SC-F04 : Wizard de réservation responsive
+  → 4 étapes doivent fonctionner sur mobile
+  → Les cartes de services et coiffeuses s'empilent verticalement
+

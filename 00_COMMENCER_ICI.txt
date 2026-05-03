@@ -1,0 +1,141 @@
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║                🎨 SALON DE COIFFURE                               ║
+║                                                                     ║
+║              APPLICATION ENTIÈREMENT CONFIGURÉE                   ║
+║                                                                     ║
+║                        ✅ PRÊT À LANCER ✅                        ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
+
+
+🚀 DÉMARRER MAINTENANT:
+═══════════════════════════════════════════════════════════════════════
+
+    👉 DOUBLE-CLIQUEZ SUR: DEMARRER.bat 👈
+
+    Ou ouvrez PowerShell et tapez:
+    
+        .\DEMARRER.bat
+
+
+⏱️ TEMPS REQUIS:
+═══════════════════════════════════════════════════════════════════════
+
+    1ère fois:  ~30-60 secondes (installation npm)
+    Fois suivantes: ~10-15 secondes
+
+
+✅ CE QUI VA SE PASSER:
+═══════════════════════════════════════════════════════════════════════
+
+    1. ✓ Vérification de Docker
+    2. ✓ Lancement de PostgreSQL 
+    3. ✓ Installation des dépendances (si nécessaire)
+    4. ✓ Configuration de la base de données
+    5. ✓ Lancement du Backend (port 3001)
+    6. ✓ Lancement du Frontend (port 3000)
+    7. ✓ Ouverture du navigateur automatiquement
+
+
+🎯 RÉSULTAT FINAL:
+═══════════════════════════════════════════════════════════════════════
+
+    Votre application sera accessible à:
+
+    🌐 http://localhost:3000
+
+    Vous verrez aussi:
+    • Une fenêtre noire "Backend" (ne fermez pas!)
+    • Une fenêtre noire "Frontend" (ne fermez pas!)
+    • Votre navigateur ouvert automatiquement
+
+
+💡 PRÉREQUIS (si ce n'est pas fait):
+═══════════════════════════════════════════════════════════════════════
+
+    ✓ Docker installé et lancé
+    ✓ Node.js 18+ installé
+    ✓ npm disponible
+
+    Si l'une de ces dépendances manque, DEMARRER.bat vous le dira.
+
+
+⏹️ POUR ARRÊTER:
+═══════════════════════════════════════════════════════════════════════
+
+    Option 1: Fermer les fenêtres
+    • Cliquez sur le X des deux fenêtres noires
+
+    Option 2: Ctrl+C
+    • Dans chaque fenêtre noire, pressez Ctrl+C
+
+    Option 3: PowerShell
+    • Tapez: docker-compose down
+
+
+📊 PORTS UTILISÉS:
+═══════════════════════════════════════════════════════════════════════
+
+    Port 3000   → Frontend (Next.js)
+    Port 3001   → Backend API (Express)
+    Port 5434   → Base de données PostgreSQL (Docker)
+
+
+💾 DONNÉES PERSISTANTES:
+═══════════════════════════════════════════════════════════════════════
+
+    Les données de la base de données persistent entre les lancements.
+    Docker stocke les données dans un volume local "salon_pg_data".
+
+
+📁 STRUCTURE DU PROJET:
+═══════════════════════════════════════════════════════════════════════
+
+    salon-coiffure-app/
+    ├── backend/           ← API Express + Prisma (port 3001)
+    ├── frontend/          ← App Next.js (port 3000)
+    ├── docker-compose.yml ← PostgreSQL
+    ├── DEMARRER.bat       ← À Lancer!
+    └── [autres fichiers de config]
+
+
+🔐 SÉCURITÉ EN DÉVELOPPEMENT:
+═══════════════════════════════════════════════════════════════════════
+
+    • JWT_SECRET est configuré pour le développement
+    • CORS autoriser localhost:3000 uniquement
+    • Mot de passe PostgreSQL par défaut (à changer en production!)
+
+
+❓ PROBLÈMES COURANTS:
+═══════════════════════════════════════════════════════════════════════
+
+    "Docker not found"
+    → Installez Docker Desktop: https://www.docker.com/products/docker-desktop
+
+    "npm not found"
+    → Installez Node.js: https://nodejs.org (v18+)
+
+    "Port already in use"
+    → Exécutez: docker-compose down
+    → Puis réessayez
+
+
+📚 FICHIERS D'AIDE DISPONIBLES:
+═══════════════════════════════════════════════════════════════════════
+
+    INSTRUCTIONS.txt    - Étapes simples et claires (À LIRE)
+    STATUS.txt          - État actuel de la configuration
+    README.md           - Guide complet d'utilisation
+    STARTUP_GUIDE.md    - Instructions détaillées
+    🚀_LIRE_MOI.txt    - Résumé visuel
+
+
+═══════════════════════════════════════════════════════════════════════
+
+                ⭐️ PRÊT À COMMENCER? ⭐️
+
+                DOUBLE-CLIQUEZ SUR: DEMARRER.bat
+
+═══════════════════════════════════════════════════════════════════════

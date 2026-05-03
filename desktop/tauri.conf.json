@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Salon de Coiffure",
+  "version": "1.0.0",
+  "identifier": "fr.salon-beaute.app",
+  "build": {
+    "frontendDist": "../frontend/out",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "npm run dev --prefix ../frontend",
+    "beforeBuildCommand": "npm run build --prefix ../frontend && npm run export --prefix ../frontend"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Salon de Coiffure",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "resizable": true,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.salon-beaute.fr"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Lifestyle",
+    "copyright": "© 2024 Salon de Coiffure",
+    "shortDescription": "Réservation et gestion de salon de coiffure",
+    "longDescription": "Application de gestion et de réservation pour salon de coiffure. Prenez rendez-vous, gérez vos services et suivez votre historique.",
+    "publisher": "Salon Beauté",
+    "windows": {
+      "wix": {
+        "language": ["fr-FR"]
+      },
+      "nsis": {
+        "languages": ["French"]
+      }
+    }
+  },
+  "plugins": {
+    "notification": {
+      "enabled": true
+    }
+  }
+}
